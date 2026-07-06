@@ -8,8 +8,14 @@ function readCurrentProjects() {
 }
 
 function readPreviousProjects() {
+  const beforeSha = process.env.BEFORE_SHA;
+
+  if (!beforeSha || /^0+$/.test(beforeSha)) {
+    return [];
+  }
+
   try {
-    const raw = execSync("git show HEAD~1:projects.json", {
+    const raw = execSync(`git show ${beforeSha}:projects.json`, {
       encoding: "utf-8",
     });
     return JSON.parse(raw);

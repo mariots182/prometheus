@@ -4,6 +4,20 @@ const github = require("./github");
 const git = require("./git");
 const { customizeProject } = require("./customize");
 
+function validateProject(project) {
+  const requiredFields = ["projectName", "framework", "team", "type"];
+
+  for (const field of requiredFields) {
+    if (!project[field]) {
+      throw new Error(`El campo "${field}" es obligatorio.`);
+    }
+  }
+
+  if (!Array.isArray(project.architecture)) {
+    throw new Error('El campo "architecture" debe ser un arreglo.');
+  }
+}
+
 async function processProject(project) {
   const start = Date.now();
   const log = {
@@ -15,6 +29,8 @@ async function processProject(project) {
   };
 
   try {
+    validateProject(project);
+
     const exists = await github.repositoryExists(project.projectName);
 
     if (exists) {
@@ -46,11 +62,14 @@ async function processProject(project) {
 
     customizeProject(repoDir, project);
 
-    git.commit(
+    const committed = git.commit(
       repoDir,
       `chore: personalización inicial para ${project.projectName}`,
     );
-    git.push(repoDir);
+
+    if (committed) {
+      git.push(repoDir);
+    }
 
     const teamSlug = project.team.toLowerCase().replace(/\s+/g, "-");
     await github.assignTeam(project.projectName, teamSlug);

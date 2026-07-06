@@ -18,12 +18,24 @@ function cloneRepo(cloneUrl, repoName) {
 
 function commit(repoDir, message) {
   execSync(`git -C ${repoDir} add -A`, { stdio: "inherit" });
+
+  const hasChanges = execSync(`git -C ${repoDir} status --porcelain`, {
+    encoding: "utf-8",
+  }).trim();
+
+  if (!hasChanges) {
+    console.log("No hay cambios para commitear.");
+    return false;
+  }
+
   execSync(
     `git -C ${repoDir} -c user.name="catalog-bot" -c user.email="bot@empresa.com" commit -m "${message}"`,
     {
       stdio: "inherit",
     },
   );
+
+  return true;
 }
 
 function push(repoDir, branch = "main") {

@@ -24,9 +24,9 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
-
       - name: Ejecutar orquestador
         env:
           GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
-          ORG_NAME: mi-organizacion
+          ORG_NAME: ${{ vars.ORG_NAME }}
+          BEFORE_SHA: ${{ github.event.before }}
         run: node scripts/create-projects.js
