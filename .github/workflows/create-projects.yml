@@ -1,0 +1,32 @@
+name: Create projects from catalog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects.json"
+
+jobs:
+  create-projects:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout con historial
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar orquestador
+        env:
+          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
+          ORG_NAME: mi-organizacion
+        run: node scripts/create-projects.js
