@@ -12,7 +12,7 @@
     "team": "Core",
     "architecture": ["HEXAGONAL"],
     "type": "backend"
-  }
+  },
   {
     "projectName": "vertedero",
     "framework": "express",
