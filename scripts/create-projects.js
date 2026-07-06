@@ -16,20 +16,33 @@ async function processProject(project) {
 
   try {
     const exists = await github.repositoryExists(project.projectName);
+
     if (exists) {
       throw new Error(`El repositorio "${project.projectName}" ya existe.`);
     }
 
+    console.log(`Creando proyecto "${project.projectName}"...`);
+
     const template = resolveTemplate(project.framework);
+
+    console.log(
+      `Usando plantilla "${template}" para "${project.projectName}".`,
+    );
+
     log.template = template;
 
     const repo = await github.createRepositoryFromTemplate(
       template,
       project.projectName,
     );
+
+    console.log(`Repositorio "${project.projectName}" creado en GitHub.`);
+
     log.repo = repo.full_name;
 
     const repoDir = git.cloneRepo(repo.clone_url, project.projectName);
+
+    console.log(`Repositorio clonado en "${repoDir}".`);
 
     customizeProject(repoDir, project);
 
