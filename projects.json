@@ -12,5 +12,12 @@
     "team": "Core",
     "architecture": ["HEXAGONAL"],
     "type": "backend"
+  },
+  {
+    "projectName": "repositorio-test-2",
+    "framework": "express",
+    "team": "Core",
+    "architecture": ["HEXAGONAL"],
+    "type": "backend"
   }
 ]
