@@ -1,6 +1,6 @@
 [
   {
-    "projectName": "vertedero",
+    "projectName": "garbage-dump",
     "framework": "express",
     "team": "Core",
     "architecture": ["HEXAGONAL"],
