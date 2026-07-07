@@ -1,6 +1,5 @@
 const templates = {
   express: { template: "backend-base" },
-  "react-native": { template: "react-native-base" },
 };
 
 function resolveTemplate(framework) {

@@ -1,4 +1,4 @@
-const ORG = process.env.ORG_NAME;
+const OWNER = process.env.OWNER_NAME;
 const TOKEN = process.env.GITHUB_TOKEN;
 const API_BASE = "https://api.github.com";
 
@@ -22,18 +22,20 @@ async function githubRequest(method, endpoint, body) {
 }
 
 async function repositoryExists(name) {
-  const res = await githubRequest("GET", `/repos/${ORG}/${name}`);
+  const res = await githubRequest("GET", `/repos/${OWNER}/${name}`);
   if (res.status === 404) return false;
   if (res.ok) return true;
   throw new Error(`Error verificando repositorio ${name}: ${res.status}`);
 }
 
 async function createRepositoryFromTemplate(templateName, newRepoName) {
+  const templateOwner = process.env.TEMPLATE_OWNER || OWNER;
+
   const res = await githubRequest(
     "POST",
-    `/repos/${ORG}/${templateName}/generate`,
+    `/repos/${templateOwner}/${templateName}/generate`,
     {
-      owner: ORG,
+      owner: OWNER,
       name: newRepoName,
       private: true,
       include_all_branches: false,
@@ -47,29 +49,14 @@ async function createRepositoryFromTemplate(templateName, newRepoName) {
     );
   }
 
-  return res.json(); // { id, name, full_name, clone_url, ... }
-}
-
-// -- Función 3: assignTeam --------------------------------------------------
-async function assignTeam(repoName, teamSlug, permission = "push") {
-  const res = await githubRequest(
-    "PUT",
-    `/orgs/${ORG}/teams/${teamSlug}/repos/${ORG}/${repoName}`,
-    { permission },
-  );
-
-  if (!res.ok) {
-    throw new Error(
-      `Error asignando team ${teamSlug} a ${repoName}: ${res.status}`,
-    );
-  }
+  return res.json();
 }
 
 // -- Función 4: createRepositoryVariable ------------------------------------
 async function createRepositoryVariable(repoName, key, value) {
   const res = await githubRequest(
     "POST",
-    `/repos/${ORG}/${repoName}/actions/variables`,
+    `/repos/${OWNER}/${repoName}/actions/variables`,
     { name: key, value },
   );
 
@@ -80,17 +67,13 @@ async function createRepositoryVariable(repoName, key, value) {
   }
 }
 
-// -- Función 5: createRepositorySecret --------------------------------------
-// Nota: para secrets reales (no de ejemplo) se requiere cifrar el valor
-// con la llave pública del repo (libsodium) antes de enviarlo. Aquí se
-// muestra el flujo completo.
 async function createRepositorySecret(repoName, key, plainValue) {
   const sodium = require("libsodium-wrappers");
   await sodium.ready;
 
   const keyRes = await githubRequest(
     "GET",
-    `/repos/${ORG}/${repoName}/actions/secrets/public-key`,
+    `/repos/${OWNER}/${repoName}/actions/secrets/public-key`,
   );
   const { key: publicKey, key_id } = await keyRes.json();
 
@@ -107,7 +90,7 @@ async function createRepositorySecret(repoName, key, plainValue) {
 
   const res = await githubRequest(
     "PUT",
-    `/repos/${ORG}/${repoName}/actions/secrets/${key}`,
+    `/repos/${OWNER}/${repoName}/actions/secrets/${key}`,
     { encrypted_value: encryptedValue, key_id },
   );
 
@@ -122,7 +105,7 @@ async function createRepositorySecret(repoName, key, plainValue) {
 async function protectMainBranch(repoName) {
   const res = await githubRequest(
     "PUT",
-    `/repos/${ORG}/${repoName}/branches/main/protection`,
+    `/repos/${OWNER}/${repoName}/branches/main/protection`,
     {
       required_status_checks: null,
       enforce_admins: true,
@@ -142,7 +125,6 @@ async function protectMainBranch(repoName) {
 module.exports = {
   repositoryExists,
   createRepositoryFromTemplate,
-  assignTeam,
   createRepositoryVariable,
   createRepositorySecret,
   protectMainBranch,

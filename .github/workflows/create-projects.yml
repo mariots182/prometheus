@@ -26,7 +26,8 @@ jobs:
         run: npm ci
       - name: Ejecutar orquestador
         env:
-          GITHUB_TOKEN: ${{ secrets.ORG_TOKEN }}
-          ORG_NAME: ${{ vars.ORG_NAME }}
+          GITHUB_TOKEN: ${{ secrets.OWNER_TOKEN }}
+          OWNER_NAME: mariots182
+          TEMPLATE_OWNER: mariots182
           BEFORE_SHA: ${{ github.event.before }}
         run: node scripts/create-projects.js

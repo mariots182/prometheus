@@ -71,9 +71,6 @@ async function processProject(project) {
       git.push(repoDir);
     }
 
-    const teamSlug = project.team.toLowerCase().replace(/\s+/g, "-");
-    await github.assignTeam(project.projectName, teamSlug);
-
     await github.createRepositoryVariable(
       project.projectName,
       "PROJECT_NAME",
