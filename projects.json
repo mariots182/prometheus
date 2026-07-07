@@ -5,33 +5,5 @@
     "team": "Core",
     "architecture": ["HEXAGONAL"],
     "type": "backend"
-  },
-  {
-    "projectName": "repositorio-test-1",
-    "framework": "express",
-    "team": "Core",
-    "architecture": ["HEXAGONAL"],
-    "type": "backend"
-  },
-  {
-    "projectName": "repositorio-test-2",
-    "framework": "express",
-    "team": "Core",
-    "architecture": ["HEXAGONAL"],
-    "type": "backend"
-  },
-  {
-    "projectName": "repositorio-test-3",
-    "framework": "express",
-    "team": "Core",
-    "architecture": ["HEXAGONAL"],
-    "type": "backend"
-  },
-  {
-    "projectName": "vertedero",
-    "framework": "express",
-    "team": "Core",
-    "architecture": ["HEXAGONAL"],
-    "type": "backend"
   }
 ]
