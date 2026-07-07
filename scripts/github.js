@@ -8,6 +8,10 @@ const headers = {
   "X-GitHub-Api-Version": "2022-11-28",
 };
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function githubRequest(method, endpoint, body) {
   const response = await fetch(`${API_BASE}${endpoint}`, {
     method,
@@ -26,6 +30,52 @@ async function repositoryExists(name) {
   if (res.status === 404) return false;
   if (res.ok) return true;
   throw new Error(`Error verificando repositorio ${name}: ${res.status}`);
+}
+
+async function getRepository(name) {
+  const res = await githubRequest("GET", `/repos/${OWNER}/${name}`);
+
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Error consultando repositorio ${name}: ${res.status} ${detail}`);
+  }
+
+  return res.json();
+}
+
+async function branchExists(repoName, branchName) {
+  const res = await githubRequest(
+    "GET",
+    `/repos/${OWNER}/${repoName}/branches/${branchName}`,
+  );
+
+  if (res.status === 404) return false;
+  if (res.ok) return true;
+
+  const detail = await res.text();
+  throw new Error(
+    `Error consultando rama ${branchName} en ${repoName}: ${res.status} ${detail}`,
+  );
+}
+
+async function waitForRepositoryReady(repoName, maxAttempts = 10) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const repo = await getRepository(repoName);
+    const defaultBranch = repo.default_branch;
+
+    if (defaultBranch && (await branchExists(repoName, defaultBranch))) {
+      return repo;
+    }
+
+    console.log(
+      `Repositorio "${repoName}" aún no tiene rama lista. Reintentando (${attempt}/${maxAttempts})...`,
+    );
+    await sleep(3000);
+  }
+
+  throw new Error(
+    `El repositorio "${repoName}" no quedó listo después de ${maxAttempts} intentos.`,
+  );
 }
 
 async function createRepositoryFromTemplate(templateName, newRepoName) {
@@ -101,11 +151,11 @@ async function createRepositorySecret(repoName, key, plainValue) {
   }
 }
 
-// -- Función 6: protectMainBranch --------------------------------------------
-async function protectMainBranch(repoName) {
+// -- Función 6: protectBranch -------------------------------------------------
+async function protectBranch(repoName, branchName) {
   const res = await githubRequest(
     "PUT",
-    `/repos/${OWNER}/${repoName}/branches/main/protection`,
+    `/repos/${OWNER}/${repoName}/branches/${branchName}/protection`,
     {
       required_status_checks: null,
       enforce_admins: true,
@@ -118,14 +168,19 @@ async function protectMainBranch(repoName) {
   );
 
   if (!res.ok) {
-    throw new Error(`Error protegiendo main en ${repoName}: ${res.status}`);
+    const detail = await res.text();
+    throw new Error(
+      `Error protegiendo ${branchName} en ${repoName}: ${res.status} ${detail}`,
+    );
   }
 }
 
 module.exports = {
   repositoryExists,
+  getRepository,
+  waitForRepositoryReady,
   createRepositoryFromTemplate,
   createRepositoryVariable,
   createRepositorySecret,
-  protectMainBranch,
+  protectBranch,
 };

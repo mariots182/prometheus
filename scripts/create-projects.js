@@ -56,6 +56,13 @@ async function processProject(project) {
 
     log.repo = repo.full_name;
 
+    const readyRepo = await github.waitForRepositoryReady(project.projectName);
+    const defaultBranch = readyRepo.default_branch;
+
+    console.log(
+      `Repositorio "${project.projectName}" listo con rama default "${defaultBranch}".`,
+    );
+
     const repoDir = git.cloneRepo(repo.clone_url, project.projectName);
 
     console.log(`Repositorio clonado en "${repoDir}".`);
@@ -68,7 +75,7 @@ async function processProject(project) {
     );
 
     if (committed) {
-      git.push(repoDir);
+      git.push(repoDir, defaultBranch);
     }
 
     await github.createRepositoryVariable(
@@ -77,7 +84,13 @@ async function processProject(project) {
       project.projectName,
     );
 
-    await github.protectMainBranch(project.projectName);
+    try {
+      await github.protectBranch(project.projectName, defaultBranch);
+    } catch (err) {
+      console.warn(
+        `No se pudo proteger la rama "${defaultBranch}" de "${project.projectName}": ${err.message}`,
+      );
+    }
 
     log.timeMs = Date.now() - start;
     console.log(`✅ ${project.projectName} creado en ${log.timeMs}ms`, log);
