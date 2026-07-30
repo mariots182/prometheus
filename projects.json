@@ -3,7 +3,18 @@
     "projectName": "garbage-dump",
     "framework": "express",
     "team": "Core",
-    "architecture": ["HEXAGONAL"],
+    "architecture": [
+      "HEXAGONAL"
+    ],
+    "type": "backend"
+  },
+  {
+    "projectName": "youtube-agent",
+    "framework": "express",
+    "team": "Core",
+    "architecture": [
+      "HEXAGONAL"
+    ],
     "type": "backend"
   }
 ]
