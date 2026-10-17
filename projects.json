@@ -16,5 +16,14 @@
       "HEXAGONAL"
     ],
     "type": "backend"
+  },
+  {
+    "projectName": "water-agent",
+    "framework": "express",
+    "team": "Core",
+    "architecture": [
+      "HEXAGONAL"
+    ],
+    "type": "backend"
   }
 ]
