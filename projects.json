@@ -34,5 +34,12 @@
       "HEXAGONAL"
     ],
     "type": "backend"
+  },
+  {
+  "projectName": "laundry-admin",
+  "framework": "angular",
+  "team": "Core",
+  "architecture": [],
+  "type": "frontend"
   }
 ]
