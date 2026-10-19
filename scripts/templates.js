@@ -1,5 +1,6 @@
 const templates = {
   express: { template: "backend-base" },
+  angular: { template: "frontend-base" },
 };
 
 function resolveTemplate(framework) {
