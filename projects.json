@@ -3,43 +3,42 @@
     "projectName": "garbage-dump",
     "framework": "express",
     "team": "Core",
-    "architecture": [
-      "HEXAGONAL"
-    ],
+    "architecture": ["HEXAGONAL"],
     "type": "backend"
   },
   {
     "projectName": "youtube-agent",
     "framework": "express",
     "team": "Core",
-    "architecture": [
-      "HEXAGONAL"
-    ],
+    "architecture": ["HEXAGONAL"],
     "type": "backend"
   },
   {
     "projectName": "water-agent",
     "framework": "express",
     "team": "Core",
-    "architecture": [
-      "HEXAGONAL"
-    ],
+    "architecture": ["HEXAGONAL"],
     "type": "backend"
   },
   {
     "projectName": "laundry-agent",
     "framework": "express",
     "team": "Core",
-    "architecture": [
-      "HEXAGONAL"
-    ],
+    "architecture": ["HEXAGONAL"],
     "type": "backend"
   },
   {
-  "projectName": "laundry-admin",
-  "framework": "angular",
-  "team": "Core",
-  "architecture": [],
-  "type": "frontend"
+    "projectName": "laundry-admin",
+    "framework": "angular",
+    "team": "Core",
+    "architecture": [],
+    "type": "frontend"
+  },
+  {
+    "projectName": "laundry-app",
+    "framework": "monolith",
+    "team": "Core",
+    "architecture": [],
+    "type": "frontend"
   }
 ]
