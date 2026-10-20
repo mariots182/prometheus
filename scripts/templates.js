@@ -1,6 +1,7 @@
 const templates = {
   express: { template: "backend-base" },
   angular: { template: "frontend-base" },
+  monolith: { template: "monolith-base" },
 };
 
 function resolveTemplate(framework) {
